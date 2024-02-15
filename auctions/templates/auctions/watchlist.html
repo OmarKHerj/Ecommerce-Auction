@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<strong> Watchlist</strong>
+<div class="card">
+    {% for listing in listings %}
+    <li><strong>{{ listing.title }}</strong><br> 
+        {% if listing.imageURL %}
+        <img src="{{ listing.imageURL }}" alt="{{ listing.title }}" width="295"><br>
+        {% endif %}
+    
+    
+    <p class="price">Price: ${{ listing.price.bid }}</p>
+    <p>{{ listing.story }}</p>
+    <p>
+        <a href="{% url 'bidlisting' id=listing.id %}" class="btn btn-primary">Bid Now</a>
+      </p>
+      <hr>
+      {%endfor%}
+  </div>
+  
+
+{% endblock %}

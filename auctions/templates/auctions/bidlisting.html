@@ -1,0 +1,148 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block body %}
+{%if message %}
+{%if updated %}
+<div class="alert alert-success" role="alert">
+    {{message}}
+</div>
+  {% else %}
+  <div class="alert alert-danger" role="alert">
+    {{message}}
+  </div>
+  {%endif%}
+  {%endif%}
+
+{% for msg in messages%}
+
+<div class="alert alert-warning" role="alert">
+    {{msg}}
+  </div>
+  
+{%endfor%}
+
+{%if not listing.activity and user == listing.price.user%}
+<div class="alert alert-primary" role="alert">
+    Congratulation This champion Is yours Now
+</div>
+{%endif%}
+
+
+<h2> Champion: {{listing.title}} </h2>
+<img src='{{listing.imageURL}}' height='350px'>
+<p> {{listing.story}} </p>
+<strong>Current Price: ${{listing.price.bid}}</strong>
+{%if user.is_authenticated and listing.activity%}
+<form action="{% url 'addbid' id=listing.id%}" method="POST">
+    {% csrf_token %}
+    <div >
+        <label class="form-label" >Enter Your Bid:</label>
+        
+        <input type="number" min='1' required class="form-control" name="newbid" palceholder="Add Bid"></input>
+        <button type="submit" class="btn btn-outline-success form-control"> Click To Bid </form>
+        
+      </div>
+      {%if ownership%}
+      <form action="{% url 'closeauctions' id=listing.id%}" method="POST">
+        {% csrf_token %}
+      <div >
+        
+        
+        
+        <button type="submit" class="btn btn-outline-danger form-control"> Close Your Auction </form>
+        
+      </div>
+      {%endif%}
+
+
+    {%endif%}
+
+
+<h3> Details </h3>
+    <ul>
+        <li> Listed By: {{listing.lister}} </li>
+        <li> Category: {{listing.category}} </li>
+    </ul>
+
+<div >
+    {% if user.is_authenticated%}
+    {%if listinginwatchlist%}
+   <form action="{% url 'removefromwatchlist' id=listing.id%}" method='POST'>
+        {% csrf_token %}
+
+        <button type='submit' class="btn btn-outline-danger" >remove from watchlist </form>
+    </form>
+
+    {% else %}
+    <form action="{% url 'addtowatchlist' id=listing.id %}" method='POST'>
+        {% csrf_token %}
+    <button type='submit' class="btn btn-outline-primary"> ♡ add to watchlist </button>
+    </form> 
+
+    {% endif %}
+    {% endif %}
+    </div>
+    <br/>
+    {%if user.is_authenticated%}
+    
+    <form action="{% url 'addcomment' id=listing.id%}" method='POST'>
+        {% csrf_token %}
+        
+        <div class="form-outline w-100">
+            <label class="form-label" for="textArea">Message</label>
+            <textarea class="form-control" name="newcomment"  id="textArea" rows="4"
+              style="background: #fff;"></textarea>
+            
+          </div>
+        </div>
+        <div class="float-end mt-2 pt-1">
+           
+          <button type="submit" class="btn btn-primary btn-sm">Post comment</button>
+            {%endif%}
+    </form>
+
+    
+    
+    <section style="background-color: #ad655f;">
+        <div class="container my-5 py-5">
+          <div class="row d-flex justify-content-center">
+            <div class="col-md-12 col-lg-10">
+              <div class="card text-dark">
+                <div class="card-body p-4">
+                  <h4 class="mb-0">Recent comments</h4>
+                  <p class="fw-light mb-4 pb-2">Latest Comments section by users</p>
+      
+                  <div class="d-flex flex-start">
+                    {%for comment in allcomment%}
+                    <div>
+                      <h6 class="fw-bold mb-1"><strong>User: {{comment.author}}</strong></h6>
+                      <div class="d-flex align-items-center mb-3">
+                        <p class="mb-0">
+                          {{comment.timestamp}}
+                          <span class="badge bg-primary">Approved</span>
+                        </p>
+                        <a href="#!" class="link-muted"><i class="fas fa-pencil-alt ms-2"></i></a>
+                        <a href="#!" class="link-muted"><i class="fas fa-redo-alt ms-2"></i></a>
+                        <a href="#!" class="link-muted"><i class="fas fa-heart ms-2"></i></a>
+                      </div>
+                      <p class="mb-0">
+                        {{comment.message}} 
+                      </p>
+                      <hr>
+                      {%endfor%}
+                    </div>
+                  </div>
+                </div>
+      
+                <hr class="my-0" style="padding: 4px;" />
+      
+                
+                </div>
+              </div>
+            </div>
+         
+      </section>
+      
+
+{% endblock%}
